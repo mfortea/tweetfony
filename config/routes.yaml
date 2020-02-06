@@ -1,0 +1,15 @@
+demo_index:
+    path: /demo
+    controller: App\Controller\TweetController::demo
+
+demo_tweet:
+    path: /demoTweet
+    controller: App\Controller\TweetController::demoTweet
+
+index:
+    path: /
+    controller: App\Controller\TweetController::index
+
+verTweet:
+    path: /tweet/{id}
+    controller: App\Controller\TweetController::verTweet

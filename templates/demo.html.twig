@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+{% block titulo %}Demo{{ parent() }}{% endblock %}
+{% block principal %}
+    <ul class="tweetline">
+        <!-- tweet 1 -->
+        <li class="tweet">
+            <div class="contenido">
+                <div class="cabecera">
+                    <a href="{{ path('demo_tweet') }}">
+                        <img class="avatarSmall" src="{{ asset('images/avatars/BillGates-small.jpg') }}" />
+                        <strong>Bill Gates</strong>
+                        <span>@BillGates</span>
+                    </a>
+                    <small class="time">18/11/2019</small>
+                </div>
+                <div class="mensaje">The future is bright for the world’s poorest farmers because of innovative companies like myAgroFarms.</div>
+                <div class="likes">4 👍</div>
+            </div>
+        </li>
+        <!-- tweet 2 -->
+        <li class="tweet">
+            <div class="contenido">
+                <div class="cabecera">
+                    <a href="#">
+                        <img class="avatarSmall" src="{{ asset('images/avatars/BillGates-small.jpg') }}" />
+                        <strong>Bill Gates</strong>
+                        <span>@BillGates</span>
+                    </a>
+                    <small class="time">15/11/2019</small>
+                </div>
+                <div class="mensaje">Farm yields in many parts of Africa are just a fifth of those in the United States. Innovations in agriculture will make it possible for poor farmers to increase their yields.</div>
+            </div>
+        </li>
+        <!-- tweet 3 -->
+        <li class="tweet">
+            <div class="contenido">
+                <div class="cabecera">
+                    <a href="#">
+                        <img class="avatarSmall" src="{{ asset('images/avatars/BillGates-small.jpg') }}" />
+                        <strong>Bill Gates</strong>
+                        <span>@BillGates</span>
+                    </a>
+                    <small class="time">14/11/2019</small>
+                </div>
+                <div class="mensaje">Whenever I travel for the foundation, the farmers I meet talk about one thing that holds them back: they can’t save their money. @myAgroFarms is one of the companies working on creative solutions to this problem.</div>
+                <div class="likes">2 👍</div>
+            </div>
+        </li>
+    </ul>
+{% endblock %}

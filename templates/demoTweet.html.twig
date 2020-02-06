@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+{% block titulo %}Bill Gates: The future is bright for the world’s poorest... {{ parent() }}{% endblock %}
+{% block principal %}
+    <div class="singleTweet">
+        <div class="cabecera">
+            <a href="{{ path('demo_tweet') }}">
+                <img class="avatarBig" src="{{ asset('images/avatars/BillGates-big.jpg') }}" />
+                <strong>Bill Gates</strong>
+                <span>@BillGates</span>
+            </a>
+            <small class="time">18/11/2019 15:22:30</small>
+        </div>
+        <div class="mensaje">The future is bright for the world’s poorest farmers because of innovative companies like myAgroFarms.</div>
+        <div class="likes">4 👍</div>
+    </div>
+{% endblock %}
