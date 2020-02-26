@@ -137,9 +137,10 @@ class ApiController extends AbstractController
             }
             $tweet->setUser($user);
             $tweet->setText($request->request->get("text"));
-            $date = DateTime::createFromFormat('d-M-Y', $request->request->get("date"));
+            $date = \DateTime::createFromFormat('d-m-Y', $request->request->get("date"));
             $tweet->setDate($date);
-            $entityManager->persist($user);
+
+            $entityManager->persist($tweet);
             $entityManager->flush();
 
             // Creación del objeto que devuelve
@@ -198,6 +199,77 @@ class ApiController extends AbstractController
             }
             return new JsonResponse($result);
             }
+
+
+            function putTweet(Request $request, $id) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $tweet = $entityManager->getRepository(Tweet::class)->findOneById($id);
+                if ($tweet == null) {
+                    return new JsonResponse([
+                    'error' => 'Tweet not found'
+                    ], 404);
+                }
+                $idUser = $request->request->get("user");
+                $user = $entityManager->getRepository(User::class)->findOneById($idUser);
+                if ($user == null) {
+                    return new JsonResponse([
+                    'error' => 'User does not exist'
+                    ], 404);
+                }
+                $tweet->setUser($user);
+                $tweet->setText($request->request->get("text"));
+                $date = \DateTime::createFromFormat('d-m-Y', $request->request->get("date"));
+                $tweet->setDate($date);
+                $entityManager->persist($tweet);
+                $entityManager->flush();
+
+                // Creación del objeto que devuelve
+                $result = new \stdClass();
+                $result->id = $tweet->getId();
+                $result->date = $tweet->getDate();
+                $result->text = $tweet->getText();
+                $result->user = $this->generateUrl('api_get_user', [
+                'id' => $tweet->getUser()->getId(),
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+                $result->likes = array();
+                foreach ($tweet->getLikes() as $user) {
+                    $result->likes[] = $this->generateUrl('api_get_user', [
+                    'id' => $user->getId(),
+                    ], UrlGeneratorInterface::ABSOLUTE_URL);
+                }
+
+                return new JsonResponse($result, 201);
+                }
+
+
+            function deteleTweetfonyUser(Request $request, $id) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->findOneById($id);
+                if ($user == null) {
+                    return new JsonResponse([
+                    'error' => 'User does not exist'
+                    ], 404);
+                }
+                $entityManager->remove($user);
+                $entityManager->flush();
+                return new JsonResponse(null, 204);
+
+            }
+
+            function deleteTweet(Request $request, $id) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $tweet = $entityManager->getRepository(Tweet::class)->findOneById($id);
+                if ($tweet == null) {
+                    return new JsonResponse([
+                    'error' => 'Tweet does not exist'
+                    ], 404);
+                }
+                $entityManager->remove($tweet);
+                $entityManager->flush();
+                return new JsonResponse(null, 204);
+
+            }
+
 
     function index() {
         $result = array();
