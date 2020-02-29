@@ -66,5 +66,5 @@ api_delete_user:
 
 api_delete_tweet:
     path: /api/tweet/{id}
-    controller: App\Controller\ApiController::deteleTweet
+    controller: App\Controller\ApiController::deleteTweet
     methods: ["DELETE"]

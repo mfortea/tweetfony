@@ -270,7 +270,6 @@ class ApiController extends AbstractController
 
             }
 
-
     function index() {
         $result = array();
         $result['users'] = $this->generateUrl('api_get_users',array(),UrlGeneratorInterface::ABSOLUTE_URL);
