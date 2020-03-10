@@ -69,24 +69,62 @@ class ApiController extends AbstractController
         return new JsonResponse($result);
     }
 
+    // function getTweets() {
+    //     $repository = $this->getDoctrine()->getRepository(Tweet::class);
+    //     $result = array();
+    //     foreach ($tweets = $repository->findAll() as $tweet) {
+    //         $result[] = $this->generateUrl('api_get_tweet', [
+    //             'id' => $tweet->getId(),
+    //             ], UrlGeneratorInterface::ABSOLUTE_URL);
+    //     }    
+    //     return new JsonResponse($result);
+    // }
+
+
     function getTweets() {
-        $repository = $this->getDoctrine()->getRepository(Tweet::class);
+        $entityManager = $this->getDoctrine()->getManager();
+        $tweets = $entityManager->getRepository(Tweet::class)->findAll();
         $result = array();
-        foreach ($tweets = $repository->findAll() as $tweet) {
-            $result[] = $this->generateUrl('api_get_tweet', [
-                'id' => $tweet->getId(),
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
+        $user = new \stdClass();
+        $likes = array();
+        foreach ($tweets as $tweet) {
+            // En los tweets, los likes son usuarios
+            foreach ($tweet->getLikes() as $like){
+                $likes[] = ['id' => $like->getId(), 'name' => $like->getName(),
+                'userName' => $like->getUserName()];
+
+            }
+
+            // Creación del objeto usuario de cada tweet
+            $user->id=$tweet->getUser()->getId();
+            $user->name=$tweet->getUser()->getName();
+            $user->userName=$tweet->getUser()->getUserName();
+
+            $result[] = ['id' => $tweet->getId(),'date' => $tweet->getDate(),
+            'text' => $tweet->getText(), 'user' => $user,'likes' => $likes];
         }    
         return new JsonResponse($result);
     }
 
+
     function getUsers() {
-        $repository = $this->getDoctrine()->getRepository(User::class);
+        $users = $this->getDoctrine()->getRepository(User::class);
         $result = array();
-        foreach ($users = $repository->findAll() as $user) {
-            $result[] = $this->generateUrl('api_get_user', [
-                'id' => $user->getId(),
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
+        $tweets = array();
+        $likes = array();
+        foreach ($users = $users->findAll() as $user) {
+            foreach ($user->getTweets() as $tweet){
+                $tweets[]=['id' => $tweet->getId(), 'date' => $tweet->getDate(), 
+                'text' => $tweet->getText()];
+            }
+            // En los usuarios, los likes son tweets
+            foreach ($user->getLikes() as $like){
+                $likes[]=['id' => $like->getId(),'date' => $like->getDate(),
+                'text' => $like->getText() ];
+            }
+
+            $result[] = ['id'=> $user->getId(), 'name'=> $user->getName(), 'userName'=> $user->getUserName(), 
+            'tweets'=> $tweets , 'likes'=> $likes];
         }    
         return new JsonResponse($result);
     }
@@ -269,6 +307,35 @@ class ApiController extends AbstractController
                 return new JsonResponse(null, 204);
 
             }
+    
+    function feedback(Request $request, $idUser, $idTweet){
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneById($idUser);
+        $tweet = $entityManager->getRepository(Tweet::class)->findOneById($idTweet);
+
+        if ($tweet == null) {
+            return new JsonResponse([
+            'error' => 'Tweet not found'
+            ], 404);
+        }
+
+        if ($user == null) {
+            return new JsonResponse([
+            'error' => 'User not found'
+            ], 404);
+        }
+        
+        if ($request->request->get("like") == "true"){
+            $tweet->addLike($user);
+        }elseif ($request->request->get("like") == "false") {
+            $tweet->removeLike($user);
+        }
+
+        $entityManager->flush();
+        return new JsonResponse("ok", 204);
+    
+
+    }
 
     function index() {
         $result = array();

@@ -68,3 +68,8 @@ api_delete_tweet:
     path: /api/tweet/{id}
     controller: App\Controller\ApiController::deleteTweet
     methods: ["DELETE"]
+
+api_feedback:
+    path: /api/users/{idUser}/tweets/{idTweet}
+    controller: App\Controller\ApiController::feedback
+    methods: ["PUT"]
